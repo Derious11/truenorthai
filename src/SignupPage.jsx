@@ -15,11 +15,11 @@ function SignupPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblt7rJbOt4b6eoTJ', {
+        await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblt7rJbOt4b6eoTJ', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ${import.meta.env.VITE_AIRTABLE_KEY}',
+          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_KEY}`,
         },
         body: JSON.stringify({
           records: [

@@ -15,6 +15,7 @@ function SignupPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log('Airtable key:', import.meta.env.VITE_AIRTABLE_KEY);
       await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblt7rJbOt4b6eoTJ', {
         method: 'POST',
         headers: {

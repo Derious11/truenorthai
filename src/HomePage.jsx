@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const foundations = [
   {
@@ -89,7 +90,9 @@ function HomePage() {
       <section className="py-24 bg-gradient-to-br from-blue-600 to-blue-800 text-white text-center px-6 relative z-10">
         <h2 className="text-4xl md:text-5xl font-bold mb-6">Are You Ready to Discover Your TrueNorth?</h2>
         <p className="mb-10 max-w-xl mx-auto text-lg text-neutral-200">This journey begins with a single decision—to know yourself better. Join us and build your personal value system.</p>
-        <a href="/signup" className="inline-block bg-orange-500 text-white px-10 py-4 rounded-full font-bold hover:bg-orange-600 transition">Start My Values Journey →</a>
+        <Link to="/signup" className="inline-block bg-orange-500 text-white px-10 py-4 rounded-full font-bold hover:bg-orange-600 transition">
+          Start My Values Journey →
+        </Link>
       </section>
     </div>
   );

@@ -83,11 +83,11 @@ function JourneyPage() {
     const userEmail = localStorage.getItem('userEmail') || 'unknown';
     const episode = episodes[currentEpisode];
     try {
-      await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblFPKDQgIWVzvc6D', {
+        await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblFPKDQgIWVzvc6D', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ${import.meta.env.VITE_AIRTABLE_KEY}',
+          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_KEY}`,
         },
         body: JSON.stringify({
           records: [
