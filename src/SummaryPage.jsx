@@ -144,11 +144,7 @@ const SummaryPage = () => {
           <p className="mb-2 text-neutral-300">
             The next step includes guided AI coaching, personalized value conflicts, a symbolic Coat of Arms, and a downloadable Values Playbook.
           </p>
-          <Link to="/upgrade">
-          <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded mt-2">
-            Upgrade My Journey
-          </button>
-          </Link><Link
+          <Link
             to="/upgrade"
             className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded mt-2"
 >             Upgrade My Journey
