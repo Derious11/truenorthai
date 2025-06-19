@@ -1,133 +1,162 @@
 import React, { useEffect, useState } from 'react';
+import { extractValuesFromText } from './utils/extractKeywords';
 import { Link } from 'react-router-dom';
-const episodes = [
-  {
-    title: 'Episode 1: The Core of It All',
-    question: 'What primarily motivates your actions day-to-day?'
-  },
-  {
-    title: 'Episode 2: The Ladder of Importance',
-    question: 'Which of these would you protect first if everything was at risk?'
-  },
-  {
-    title: 'Episode 3: The Spectrum of Truth',
-    question: 'What kind of value feels most powerful to you?'
-  },
-  {
-    title: 'Episode 4: The Courage to Choose',
-    question: 'What helps you feel most true to yourself?'
-  },
-  {
-    title: 'Episode 5: The Moral Compass',
-    question: 'What most often guides your idea of right and wrong?'
-  },
-  {
-    title: 'Episode 6: The Architect of Thought',
-    question: 'How do you make tough decisions?'
-  }
-];
 
-function SummaryPage() {
-  const [responses, setResponses] = useState([]);
-  const [summary, setSummary] = useState('Generating your personal values summary...');
-  const userEmail = localStorage.getItem('userEmail') || 'unknown';
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblFPKDQgIWVzvc6D', {
-          headers: {
-            Authorization: 'Bearer patJZ78Lyvz8Ybcsz.1115be2d9b88209c6f613542de96a21c1a8766651fa32cb7ea5d3df1e1339138',
-          },
-        });
-        const data = await res.json();
-        const userRecords = data.records.filter((r) => r.fields.Email === userEmail);
+const SummaryPage = () => {
+  const [keywords, setKeywords] = useState([]);
+  const [archetype, setArchetype] = useState('');
+  const [name, setName] = useState('');
+  const [intention, setIntention] = useState('');
 
-        const sortedResponses = episodes.map((ep) => {
-          const match = userRecords.find((r) => r.fields.Episode === ep.title);
-          if (!match) return null;
-          const tag = match.fields.SelectedValue || 'unknown';
-          const label = match.fields.SelectedLabel || tag;
-          return {
-            episode: ep.title,
-            question: ep.question,
-            answer: label,
-            tag
-          };
-        }).filter(Boolean);
-
-        setResponses(sortedResponses);
-
-        const tags = sortedResponses.map(r => r.tag);
-        const summaryText = `Your reflections suggest you prioritize values such as ${[...new Set(tags)].join(', ')}.`;
-        setSummary(summaryText);
-      } catch (err) {
-        console.error('Failed to fetch summary:', err);
-        setSummary('Error loading summary.');
-      }
-    }
-    fetchData();
-  }, [userEmail]);
-
-  const handleEmail = async () => {
-    try {
-      await fetch('https://api.yourdomain.com/send-summary', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, summary, responses }),
-      });
-      alert('Summary sent to your email!');
-    } catch (err) {
-      alert('Failed to send email.');
+  const archetypeDescriptions = {
+    Pathfinder: {
+      icon: '🧭',
+      description: 'You seek clarity and meaning. You blaze trails aligned with purpose and truth.'
+    },
+    Guardian: {
+      icon: '🛡️',
+      description: 'You value stability and loyalty. You protect what matters and serve with integrity.'
+    },
+    Catalyst: {
+      icon: '🔥',
+      description: 'You spark change and thrive on bold action. You move forward with courage.'
+    },
+    Harmonizer: {
+      icon: '🌿',
+      description: 'You bring peace and connection. You help others find balance and understanding.'
+    },
+    Sage: {
+      icon: '📚',
+      description: 'You seek wisdom and insight. You reflect deeply and share meaningful perspectives.'
+    },
+    Visionary: {
+      icon: '🌟',
+      description: 'You dream big and look ahead. You lead with ideas and imagine new possibilities.'
+    },
+    Explorer: {
+      icon: '🧳',
+      description: 'You’re still discovering your path. Curiosity and openness guide your journey.'
     }
   };
 
+  const valuesMap = {
+    'intrinsic-growth': 'growth',
+    'extrinsic-status': 'achievement',
+    'intrinsic-connection': 'connection',
+    'extrinsic-success': 'success',
+    'safety': 'stability',
+    'freedom': 'freedom',
+    'connection': 'connection',
+    'growth': 'growth',
+    'universal-truth': 'justice',
+    'personal-identity': 'authenticity',
+    'shared-culture': 'loyalty',
+    'spiritual-framework': 'purpose',
+    'authenticity-courage': 'courage',
+    'freedom-society': 'freedom',
+    'inner-truth': 'truth',
+    'ownership': 'responsibility',
+    'utilitarian-impact': 'compassion',
+    'duty-obligation': 'duty',
+    'virtue-character': 'honesty',
+    'moral-intuition': 'intuition',
+    'logic': 'logic',
+    'value-check': 'alignment',
+    'reason-balance': 'balance',
+    'consistency-audit': 'consistency'
+  };
+
+  useEffect(() => {
+    const rawResponses = Object.values(JSON.parse(localStorage.getItem('journeySelections') || '{}'));
+    const mappedKeywords = rawResponses.map(val => valuesMap[val]).filter(Boolean);
+    const extracted = extractValuesFromText(mappedKeywords.join(' '));
+    setKeywords(extracted);
+
+    const archetypeMap = {
+      Pathfinder: ['truth', 'clarity', 'growth', 'purpose'],
+      Guardian: ['loyalty', 'duty', 'stability', 'family'],
+      Catalyst: ['change', 'courage', 'bold', 'freedom'],
+      Harmonizer: ['connection', 'peace', 'balance', 'empathy'],
+      Sage: ['wisdom', 'learning', 'reflection', 'perspective'],
+      Visionary: ['future', 'innovation', 'idealism', 'creativity']
+    };
+
+    let bestMatch = 'Explorer';
+    let maxMatches = 0;
+    Object.entries(archetypeMap).forEach(([name, keys]) => {
+      const matchCount = keys.filter(key => extracted.includes(key)).length;
+      if (matchCount > maxMatches) {
+        bestMatch = name;
+        maxMatches = matchCount;
+      }
+    });
+    setArchetype(bestMatch);
+
+    const storedName = localStorage.getItem('userName') || 'Explorer';
+    const storedIntention = localStorage.getItem('userIntention') || '';
+    setName(storedName);
+    setIntention(storedIntention);
+  }, []);
+
+  const article = ['A', 'E', 'I', 'O', 'U'].includes(archetype.charAt(0)) ? 'an' : 'a';
+  const { icon, description } = archetypeDescriptions[archetype] || archetypeDescriptions['Explorer'];
+
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 px-6 py-12 font-sans relative">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-bl from-blue-800 via-neutral-900 to-orange-700 opacity-20" />
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 px-6 py-12 font-sans">
+      <div className="max-w-3xl mx-auto bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl p-8">
+        <h1 className="text-3xl font-bold text-orange-400 mb-4 text-center">
+          {icon} {name}, You Are {article} {archetype}
+        </h1>
+        <p className="text-lg italic text-center text-blue-300 mb-6">
+          {description}
+        </p>
 
-      <div className="max-w-5xl mx-auto mb-12 text-center">
-        <h1 className="text-4xl font-extrabold text-orange-400 mb-2">Your Journey Summary</h1>
-        <p className="text-neutral-300">Review your reflections and discover what your values reveal.</p>
-      </div>
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold text-orange-300 mb-2">Your Emerging Values</h2>
+          {keywords.length > 0 ? (
+            <ul className="list-disc list-inside pl-4 text-neutral-200">
+              {keywords.map((word, index) => (
+                <li key={index}>{word.charAt(0).toUpperCase() + word.slice(1)}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="italic text-neutral-500">
+              We couldn't detect values from your reflections. Try writing a bit more, or upgrade for a deeper AI analysis.
+            </p>
+          )}
+        </section>
 
-      <div className="text-center mb-10">
-        <img src="/logo.png" alt="TrueNorth AI" className="mx-auto w-32 mb-2" />
-        <h2 className="text-lg tracking-wide text-neutral-400">TrueNorth AI</h2>
-      </div>
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold text-orange-300 mb-2">A Reflection to Carry Forward</h2>
+          <p className="text-neutral-300 mb-2">
+            You've started reflecting on what truly matters. This clarity is the first step in living a life aligned with your values.
+          </p>
+          {intention && (
+            <p className="text-neutral-400 italic">
+              You shared that your goal was: “{intention}” — let that guide your next steps.
+            </p>
+          )}
+        </section>
 
-      <div className="max-w-3xl mx-auto bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-xl mb-12">
-        <h2 className="text-2xl font-bold text-orange-300 mb-4">Your Values Insight</h2>
-        <p className="text-neutral-200 leading-relaxed whitespace-pre-line">{summary}</p>
-      </div>
-
-      <div className="max-w-3xl mx-auto space-y-8">
-        {responses.map((item, idx) => (
-          <div key={idx} className="bg-neutral-900 border border-neutral-800 rounded-xl p-5">
-            <h3 className="text-lg font-bold text-blue-400 mb-3">{item.episode}</h3>
-            <p className="text-sm text-orange-300 font-medium mb-1">{item.question}</p>
-            <p className="text-neutral-200 mb-1">Answer: {item.answer}</p>
-            <p className="text-neutral-400 text-sm italic">Value Theme: {item.tag}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="text-center mt-12 space-x-4">
-        <button
-          onClick={handleEmail}
-          className="bg-orange-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-600 transition"
-        >
-          Send Summary to My Email
-        </button>
-        <Link
-          to="/"
-          className="inline-block text-sm text-blue-400 hover:underline"
-        >
-          ← Back to Home
-        </Link>
+        <section className="bg-neutral-800 p-4 rounded-xl mt-8 border border-neutral-700">
+          <h2 className="text-lg font-bold text-orange-300 mb-2">🔓 Unlock Your Full Journey</h2>
+          <p className="mb-2 text-neutral-300">
+            The next step includes guided AI coaching, personalized value conflicts, a symbolic Coat of Arms, and a downloadable Values Playbook.
+          </p>
+          <Link to="/upgrade">
+          <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded mt-2">
+            Upgrade My Journey
+          </button>
+          </Link><Link
+            to="/upgrade"
+            className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded mt-2"
+>             Upgrade My Journey
+          </Link>
+        </section>
       </div>
     </div>
   );
-}
+};
 
 export default SummaryPage;

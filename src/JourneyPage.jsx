@@ -110,6 +110,7 @@ function JourneyPage() {
     if (currentEpisode < episodes.length - 1) {
       setCurrentEpisode(currentEpisode + 1);
     } else {
+      localStorage.setItem('journeySelections', JSON.stringify(selections));
       navigate('/summary');
     }
   };

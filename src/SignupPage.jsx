@@ -35,6 +35,9 @@ function SignupPage() {
       });
 
       localStorage.setItem('userEmail', form.email);
+      localStorage.setItem('userName', form.name);
+      localStorage.setItem('userIntention', form.intention);
+      alert('Thank you for signing up! Your journey begins now.');
       navigate('/journey');
     } catch (error) {
       console.error('Submission error:', error);
