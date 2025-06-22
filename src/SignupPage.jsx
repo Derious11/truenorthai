@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function SignupPage() {
-  const [form, setForm] = useState({ name: '', email: '', intention: '' });
+  const [form, setForm] = useState({ name: '', intention: '' });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const generateUserID = (name) => {
+    const timestamp = Date.now().toString(36);
+    return `${name.trim().toLowerCase().replace(/\s+/g, '-')}-${timestamp}`;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,8 +19,10 @@ function SignupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const userID = generateUserID(form.name);
+
     try {
-        await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblt7rJbOt4b6eoTJ', {
+      await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblt7rJbOt4b6eoTJ', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,18 +33,17 @@ function SignupPage() {
             {
               fields: {
                 Name: form.name,
-                Email: form.email,
                 Intention: form.intention,
+                UserID: userID,
               },
             },
           ],
         }),
       });
 
-      localStorage.setItem('userEmail', form.email);
+      localStorage.setItem('userID', userID);
       localStorage.setItem('userName', form.name);
       localStorage.setItem('userIntention', form.intention);
-      alert('Thank you for signing up! Your journey begins now.');
       navigate('/journey');
     } catch (error) {
       console.error('Submission error:', error);
@@ -49,7 +55,6 @@ function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-950 px-4 py-10 relative overflow-hidden">
-      {/* Animated Background */}
       <div className="absolute inset-0 z-0 animate-pulse opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-500 via-neutral-900 to-blue-800"></div>
 
       <form
@@ -68,19 +73,6 @@ function SignupPage() {
             required
             className="w-full bg-neutral-800 border border-neutral-700 rounded-md p-3 text-sm placeholder-neutral-500 focus:outline-none focus:border-orange-500"
             placeholder="Jane Doe"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-orange-300 mb-1">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="w-full bg-neutral-800 border border-neutral-700 rounded-md p-3 text-sm placeholder-neutral-500 focus:outline-none focus:border-orange-500"
-            placeholder="jane@example.com"
           />
         </div>
 

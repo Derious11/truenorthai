@@ -1,59 +1,137 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const UpgradePage = () => {
-  const [showPopup, setShowPopup] = useState(false);
+function UpgradePage() {
+  const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    const userID = localStorage.getItem('userID') || 'unknown';
+    try {
+      await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tbl8Hjr5jYYAIGagR', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          records: [
+            {
+              fields: {
+                Email: email,
+                UserID: userID,
+              },
+            },
+          ],
+        }),
+      });
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Upgrade interest error:', err);
+      alert('Something went wrong. Please try again.');
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 px-6 py-12 font-sans">
-      <div className="max-w-3xl mx-auto bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl p-8 text-center">
-        <h1 className="text-4xl font-bold text-orange-400 mb-6">Unlock Your Full Journey</h1>
-        <p className="text-neutral-300 text-lg mb-6">
-          You’ve taken the first step. Now go deeper with AI-powered guidance designed to help you explore, resolve, and activate your personal values.
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 px-6 py-16 font-sans flex items-center justify-center">
+      <div className="max-w-3xl w-full bg-neutral-900 border border-neutral-800 p-10 rounded-2xl shadow-2xl relative z-10">
+        <h1 className="text-4xl font-extrabold text-orange-400 text-center mb-6">
+          TrueNorth AI — Discover Who You Are. Live What Matters.
+        </h1>
+
+        <p className="text-center text-neutral-400 italic mb-8">
+          What if your compass pointed not north... but to your true self?
         </p>
 
-        <div className="text-left space-y-6 mb-10">
-          <div className="bg-neutral-800 border border-neutral-700 rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-orange-300 mb-2">🧠 Guided AI Coaching</h2>
-            <p className="text-neutral-300">Scenario-based questions tailored to your reflections. Explore how your values impact real decisions.</p>
+        <div className="space-y-6 text-neutral-300">
+          <p>
+            <strong className="text-orange-300">TrueNorth AI</strong> isn’t just a quiz. It’s a journey —
+            grounded in philosophy, psychology, and your lived experience. It helps you uncover what truly drives you.
+          </p>
+
+          <div className="border-l-4 border-orange-500 pl-4 text-neutral-200">
+            <p className="font-semibold text-orange-400">Included in Tier 2:</p>
+            <ul className="list-disc list-inside mt-2 space-y-1">
+              <li>GPT-powered mission statement & personal motto</li>
+              <li>Symbolic “Coat of Arms” visual based on your core identity</li>
+              <li>Downloadable Values Playbook (PDF)</li>
+              <li>Exclusive Life Transitions Toolkit</li>
+              <li>Access to TrueNorth Community</li>
+            </ul>
           </div>
 
-          <div className="bg-neutral-800 border border-neutral-700 rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-orange-300 mb-2">🛡️ Coat of Arms & Personal Motto</h2>
-            <p className="text-neutral-300">Define your symbolic identity with a personalized crest and mantra that embody your core self.</p>
+          <div className="bg-neutral-800 rounded-lg p-4 border border-neutral-700 text-neutral-200">
+            <h2 className="text-lg font-bold text-orange-300 mb-1">Early Explorer Pricing</h2>
+            <p>
+              Lock in lifetime access for <span className="text-orange-400 font-semibold">$19</span> — price increases to <span className="font-semibold">$39</span> on <span className="underline">Go Live</span>.
+              Early sign-ups will help shape the future of this experience.
+            </p>
           </div>
 
-          <div className="bg-neutral-800 border border-neutral-700 rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-orange-300 mb-2">📄 Values Playbook PDF</h2>
-            <p className="text-neutral-300">Download your complete values journey as a beautifully designed PDF to reflect, revisit, or share.</p>
+          <div className="bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded">
+            <p className="text-blue-300">
+              No payment required yet — just click below to express your interest. You’ll get first access and be invited to help co-create the next tier.
+            </p>
+          </div>
+
+          <div className="text-center mt-8">
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full transition"
+            >
+              I Want Early Access
+            </button>
+          </div>
+
+          <p className="text-sm text-neutral-500 text-center mt-4">
+            You’ll hear from us soon with details on how to shape your symbolic identity.
+          </p>
+        </div>
+      </div>
+
+      {/* Email Capture Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-8 shadow-xl w-full max-w-md relative">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-3 right-4 text-neutral-500 hover:text-orange-400 text-xl"
+            >
+              ×
+            </button>
+
+            {!submitted ? (
+              <>
+                <h2 className="text-xl font-bold text-orange-300 mb-4">Get Early Access</h2>
+                <p className="text-neutral-400 mb-4">We’ll notify you when we go live. No spam, ever.</p>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 mb-4 rounded-md bg-neutral-800 border border-neutral-700 focus:outline-none focus:border-orange-500 text-sm"
+                />
+                <button
+                  onClick={handleSubmit}
+                  className="w-full bg-orange-500 text-white font-bold py-2 px-4 rounded hover:bg-orange-600 transition"
+                >
+                  Notify Me
+                </button>
+              </>
+            ) : (
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-green-400 mb-2">🎉 You're on the list!</h3>
+                <p className="text-neutral-300">You’ll be among the first to shape the next chapter of TrueNorth AI.</p>
+              </div>
+            )}
           </div>
         </div>
-
-        <button
-          onClick={() => setShowPopup(true)}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-full text-lg transition"
-        >
-          Start My Full Journey
-        </button>
-
-        {showPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-            <div className="bg-neutral-900 border border-orange-400 p-6 rounded-2xl shadow-xl text-center max-w-sm">
-              <h2 className="text-2xl font-bold text-orange-300 mb-4">Coming Soon</h2>
-              <p className="text-neutral-200 mb-4">
-                You’re already on the list! We’ll notify you at launch so you can be among the first to experience the full TrueNorth journey.
-              </p>
-              <button
-                onClick={() => setShowPopup(false)}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
-};
+}
 
 export default UpgradePage;

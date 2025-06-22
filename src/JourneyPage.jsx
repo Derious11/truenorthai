@@ -80,7 +80,7 @@ function JourneyPage() {
   };
 
   const handleSubmit = async () => {
-    const userEmail = localStorage.getItem('userEmail') || 'unknown';
+    const userID = localStorage.getItem('userID') || 'unknown';
     const episode = episodes[currentEpisode];
     try {
         await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblFPKDQgIWVzvc6D', {
@@ -93,7 +93,7 @@ function JourneyPage() {
           records: [
             {
               fields: {
-                Email: userEmail,
+                UserID: userID,
                 Episode: episode.title,
                 Question: episode.question,
                 SelectedLabel: episode.options.find(opt => opt.value === selections[currentEpisode])?.label,

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { extractValuesFromText } from './utils/extractKeywords';
 import { Link } from 'react-router-dom';
 
-
 const SummaryPage = () => {
   const [keywords, setKeywords] = useState([]);
   const [archetype, setArchetype] = useState('');
@@ -147,7 +146,8 @@ const SummaryPage = () => {
           <Link
             to="/upgrade"
             className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded mt-2"
->             Upgrade My Journey
+          >
+            Upgrade My Journey
           </Link>
         </section>
       </div>
