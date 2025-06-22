@@ -48,18 +48,20 @@ function UpgradePage() {
 
         <div className="space-y-6 text-neutral-300">
           <p>
-            <strong className="text-orange-300">TrueNorth AI</strong> isn’t just a quiz. It’s a journey —
-            grounded in philosophy, psychology, and your lived experience. It helps you uncover what truly drives you.
+            <strong className="text-orange-300">TrueNorth AI</strong>  isn’t just a quiz. It’s a transformative journey — grounded in psychology, philosophy, and your lived experiences. 
+            Through 12 immersive modules, you’ll uncover your true values, clarify your life’s direction, and shape a symbolic identity that reflects your inner compass.
           </p>
 
           <div className="border-l-4 border-orange-500 pl-4 text-neutral-200">
             <p className="font-semibold text-orange-400">Included in Tier 2:</p>
             <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>GPT-powered mission statement & personal motto</li>
-              <li>Symbolic “Coat of Arms” visual based on your core identity</li>
-              <li>Downloadable Values Playbook (PDF)</li>
-              <li>Exclusive Life Transitions Toolkit</li>
-              <li>Access to TrueNorth Community</li>
+            <li>🔍 GPT-powered guided reflections and personalized insight after every module</li>
+            <li>🧭 Mini Mission Statement & Early Values Map (after 3 modules)</li>
+            <li>💬 Personal Motto & Symbolic Identity Sketch (after 6 modules)</li>
+            <li>🛡️ Full Coat of Arms & Draft Values Manifesto (after 9 modules)</li>
+            <li>📘 Final Mission Statement & Downloadable Values Playbook (after 12 modules)</li>
+            <li>🧰 Life Transitions Toolkit to apply your values to real change</li>
+            <li>🌐 Access to the private TrueNorth Community</li>
             </ul>
           </div>
 
