@@ -10,21 +10,17 @@ function UpgradePage() {
   const handleSubmit = async () => {
     const userID = localStorage.getItem('userID') || 'unknown';
     try {
-      await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tbl8Hjr5jYYAIGagR', {
+      await fetch('/api/airtable', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_KEY}`,
         },
         body: JSON.stringify({
-          records: [
-            {
-              fields: {
-                Email: email,
-                UserID: userID,
-              },
-            },
-          ],
+          table: import.meta.env.VITE_UPGRADE_TABLE,
+          fields: {
+            Email: email,
+            UserID: userID,
+          },
         }),
       });
 

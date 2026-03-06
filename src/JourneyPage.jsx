@@ -83,24 +83,20 @@ function JourneyPage() {
     const userID = localStorage.getItem('userID') || 'unknown';
     const episode = episodes[currentEpisode];
     try {
-        await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblFPKDQgIWVzvc6D', {
+      await fetch('/api/airtable', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_KEY}`,
         },
         body: JSON.stringify({
-          records: [
-            {
-              fields: {
-                UserID: userID,
-                Episode: episode.title,
-                Question: episode.question,
-                SelectedLabel: episode.options.find(opt => opt.value === selections[currentEpisode])?.label,
-                SelectedValue: selections[currentEpisode]
-              },
-            },
-          ],
+          table: import.meta.env.VITE_JOURNEY_TABLE,
+          fields: {
+            UserID: userID,
+            Episode: episode.title,
+            Question: episode.question,
+            SelectedLabel: episode.options.find(opt => opt.value === selections[currentEpisode])?.label,
+            SelectedValue: selections[currentEpisode]
+          },
         }),
       });
     } catch (err) {

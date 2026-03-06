@@ -22,22 +22,18 @@ function SignupPage() {
     const userID = generateUserID(form.name);
 
     try {
-      await fetch('https://api.airtable.com/v0/appcB5OrRVIkPirkU/tblt7rJbOt4b6eoTJ', {
+      await fetch('/api/airtable', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_KEY}`,
         },
         body: JSON.stringify({
-          records: [
-            {
-              fields: {
-                Name: form.name,
-                Intention: form.intention,
-                UserID: userID,
-              },
-            },
-          ],
+          table: import.meta.env.VITE_SIGNUP_TABLE,
+          fields: {
+            Name: form.name,
+            Intention: form.intention,
+            UserID: userID,
+          },
         }),
       });
 
